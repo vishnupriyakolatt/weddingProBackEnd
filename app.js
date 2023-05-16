@@ -27,7 +27,7 @@ app.use("/public", express.static(path.join(__dirname + "public")));
 app.use(morgan("dev"));
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: [process.env.CORS],
     methods: ["GET", "POST", "PUT", "PATCH"],
     credentials: true,
   })
