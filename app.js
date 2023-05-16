@@ -32,9 +32,9 @@ app.use(
     credentials: true,
   })
 );
-app.use("/superadmin", superadminRoutes);
-app.use("/admin", adminRoutes);
-app.use("/", userRoutes);
+app.use("/api/superadmin", superadminRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api", userRoutes);
 app.listen(PORT, () => {
   console.log(`server running on http://localhost:${PORT} `);
 });
