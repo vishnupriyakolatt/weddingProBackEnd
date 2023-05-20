@@ -40,8 +40,8 @@ const adminSchema=new Schema({
         required:true
     },
     isblocked:{
-        type:String,
-        Boolean:false
+        type:Boolean,
+        default:false
     }
 
 })

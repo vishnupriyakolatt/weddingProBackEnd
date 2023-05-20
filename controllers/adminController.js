@@ -10,6 +10,13 @@ const bcrypt = require("bcrypt");
 const Venue = require("../models/admin/Venue");
 const Decor = require("../models/admin/Decoration");
 const sharp = require("sharp");
+const User = require("../models/userModels/userDetail");
+
+const DecorBooking=require('../models/userModels/DecorBook')
+const PhotoBooking=require('../models/userModels/PhotoBook')
+const VenueBooking=require('../models/userModels/userVenueBook');
+
+
 const createToken = (_id) => {
   return jwt.sign({ _id }, "adminsecretkey", { expiresIn: "3d" });
 };
@@ -24,7 +31,7 @@ const login = async (req, res) => {
     if (adminExist) {
       console.log(email);
       console.log(password);
-      const passwordMatch = await bcrypt.compare(password, adminExist.password);
+      const passwordMatch =await bcrypt.compare(password, adminExist.password);
       console.log("passwordMatch", passwordMatch);
 
       if (email === adminExist.email && passwordMatch === true) {
@@ -279,9 +286,132 @@ const updateVenue = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+const Deletecat = async (req, res) => {
+  const id = req.params.id;
+  try {
+    await Venuecat.findByIdAndDelete(id);
+    res.status(200).json({ message: "Venue category deleted successfully." });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json();
+  }
+};
+
+
+
+
+const Deletevenue = async (req, res) => {
+  const id = req.params.id;
+  try {
+    await Venue.findByIdAndDelete(id);
+    res.status(200).json({ message: "Venue category deleted successfully." });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json();
+  }
+};
+
+
+
+
+
+const Deletedecor = async (req, res) => {
+  const id = req.params.id;
+  try {
+    await Decor.findByIdAndDelete(id);
+    res.status(200).json({ message: "Decor  deleted successfully." });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json();
+  }
+};
+
+
+
+
+const Deletephoto = async (req, res) => {
+  const id = req.params.id;
+  try {
+    await photographer.findByIdAndDelete(id);
+    res.status(200).json({ message: "Photographer  deleted successfully." });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json();
+  }
+};
+const blockUser = async (req, res) => {
+  try {
+    const id = req.params.id;
+    console.log(id);
+    const userStatus = await User.findById(id);
+
+    if (userStatus.isBlocked === false) {
+      const isBlocked = await User.findByIdAndUpdate(id, { isBlocked: true });
+      console.log(isBlocked.isBlocked);
+      res.json({ success: true });
+    } else {
+      const isBlocked = await User.findByIdAndUpdate(id, { isBlocked: false });
+      console.log(isBlocked.isBlocked);
+      res.json({ success: true });
+    }
+  } catch (error) {
+    console.error('Error blocking/unblocking user:', error);
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+};
+
+const getAdmin=async(req,res)=>{
+  countuser=await User.find({}).count()
+  console.log(countuser)
+ 
+  const venuecount=await Venue.find({}).count()
+ console.log(venuecount);
+ 
+ const photocount=await photographer.find({}).count()
+ console.log(photocount);
+ 
+ const Decorcount=await Decor.find({}).count()
+ console.log(Decorcount);
+ const admin=await Admin.find().count()
+ console.log(admin);
+ const venue=await Venue.find()
+ const decor=await Decor.find()
+ const user=await User.find()
+ 
+ const photoBookRecords = await PhotoBooking.find();
+ let totalRevenue ;
+ let photoBookings = 0;
+  await PhotoBooking.find().populate('PhotoId','rate').then(datas => datas.map(data=>{
+   photoBookings =parseInt( data.PhotoId.rate)+photoBookings
+ }))
+ 
+ console.log(photoBookings)
+ 
+ 
+ let DecorBookings=0;
+ await DecorBooking.find().populate('DecorId','rent').then(datas=>datas.map(data=>{
+   DecorBookings=parseInt(data.DecorId.rent)+DecorBookings
+ }))
+ 
+ 
+   console.log(DecorBookings);
+ 
+ 
+   let VenueBookings=0;
+   await VenueBooking.find().populate('VenueId','rent').then(datas=>datas.map(data=>{
+     VenueBookings=parseInt(data.VenueId.rent)+VenueBookings
+   }))
+ 
+   console.log(VenueBookings)
+ 
+   const TotalRevenue=VenueBookings+DecorBookings+photoBookings
+ 
+ res.status(200).json({TotalRevenue,venuecount,countuser,photocount,Decorcount,venue,decor,admin,user,DecorBookings,photoBookings,VenueBookings,})
+ }
+
 
 module.exports = {
-  login,
+  login,Deletecat,Deletevenue,Deletedecor,Deletephoto,blockUser,getAdmin,
   addVenue,
   Venuecategory,
   customerview,

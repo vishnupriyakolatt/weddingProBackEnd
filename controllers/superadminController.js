@@ -4,9 +4,18 @@ const mailer = require("../config/otp");
 upload = require("../utility/multer");
 const Eventcat = require("../models/admin/Eventcategory");
 const Venuecat = require("../models/admin/Venuecat");
-const photographer = require("../models/admin/Photographer");
+const photo = require("../models/admin/Photographer");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const User=require('../models/userModels/userDetail')
+const Venue = require("../models/admin/Venue");
+const Decor = require("../models/admin/Decoration");
+
+
+const DecorBooking=require('../models/userModels/DecorBook')
+const PhotoBooking=require('../models/userModels/PhotoBook')
+const VenueBooking=require('../models/userModels/userVenueBook');
+
 
 const createToken = (_id) => {
   return jwt.sign({_id},'superadminSecretkey',{expiresIn:'3d'})
@@ -14,29 +23,26 @@ const createToken = (_id) => {
 const demo = (req,res)=>{console.log('jajlafjkdls')}
 
 const login = async (req, res) => {
-
   try {
     const { email, password } = req.body;
     console.log(req.body);
 
     const superwe = await superadmin.findOne({ email: req.body.email });
-
     console.log(superwe);
 
-    if (!superwe || email !== "admin@gmail.com") {
-      res.status(401).json({ error: "Invalid login details" });
-    } else if (email === superwe.email && password === superwe.password) {
+    if (email === superwe.email && password === superwe.password) {
       const token = createToken(superwe._id);
       console.log("Token created: " + token);
-      res.status(200).json({success:true, token, message: "Login successful" });
+      return res.status(200).json({ token, message: "Login successful" });
     } else {
-      res.status(401).json({ error: "Incorrect login details" });
+      return res.status(200).json({  success: true,error: "Incorrect login details" });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
+
 
 const viewadmin = async (req, res) => {
   try {
@@ -48,6 +54,12 @@ const viewadmin = async (req, res) => {
 
 const insertAdmin = async (req, res) => {
   try {
+    const existingAdmin = await Admin.findOne({ email: req.body.email });
+    if (existingAdmin) {
+      return res.status(200).json({ error: "Email is already registered" });
+    }else{
+
+    
     let mailDetails = {
       from: "vishnupriyakolatt@gmail.com",
       to: req.body.email,
@@ -82,6 +94,7 @@ const insertAdmin = async (req, res) => {
         console.log("otp mailed");
       }
     });
+  }
   } catch {
     console.log("error");
   }
@@ -145,14 +158,14 @@ const blockAdmin= async (req, res) => {
     const id=req.params.id
     console.log(id);
     const adminstatus=await Admin.findById({_id:id})
-    if (adminstatus.isblocked===false){
-    const isBlocked=await Admin.findByIdAndUpdate(id,{$set: {isblocked:true}})
+    if (adminstatus.isblocked===true){
+    const isBlocked=await Admin.findByIdAndUpdate(id,{$set: {isblocked:false}})
     console.log(isBlocked.isblocked);
-    res.json({success:true})
+    res.json({success:true,message:"Admin unblocked successfully"})
     }else{
-      const isBlocked = await Admin.findByIdAndUpdate(id,{$set:{isblocked:false}})
+      const isBlocked = await Admin.findByIdAndUpdate(id,{$set:{isblocked:true}})
       console.log(isBlocked.isblocked);
-      res.json({success:true})
+      res.json({success:false,message:"Admin blocked successfully"})
     }
   
   }
@@ -167,14 +180,61 @@ const blockAdmin= async (req, res) => {
     }
   };
   
+const getAdmin=async(req,res)=>{
+ countuser=await User.find({}).count()
+ console.log(countuser)
 
+ const venuecount=await Venue.find({}).count()
+console.log(venuecount);
+
+const photocount=await photo.find({}).count()
+console.log(photocount);
+
+const Decorcount=await Decor.find({}).count()
+console.log(Decorcount);
+const admin=await Admin.find().count()
+console.log(admin);
+const venue=await Venue.find()
+const decor=await Decor.find()
+const user=await User.find()
+
+const photoBookRecords = await PhotoBooking.find();
+let totalRevenue ;
+let photoBookings = 0;
+ await PhotoBooking.find().populate('PhotoId','rate').then(datas => datas.map(data=>{
+  photoBookings =parseInt( data.PhotoId.rate)+photoBookings
+}))
+
+console.log(photoBookings)
+
+
+let DecorBookings=0;
+await DecorBooking.find().populate('DecorId','rent').then(datas=>datas.map(data=>{
+  DecorBookings=parseInt(data.DecorId.rent)+DecorBookings
+}))
+
+
+  console.log(DecorBookings);
+
+
+  let VenueBookings=0;
+  await VenueBooking.find().populate('VenueId','rent').then(datas=>datas.map(data=>{
+    VenueBookings=parseInt(data.VenueId.rent)+VenueBookings
+  }))
+
+  console.log(VenueBookings)
+
+const TotalRevenue=VenueBookings+DecorBookings+photoBookings
+
+res.status(200).json({venuecount,countuser,photocount,Decorcount,venue,decor,admin,user,DecorBookings,photoBookings,VenueBookings,TotalRevenue})
+}
   
  
 
 
 
 module.exports = {demo,
-login,
+login,getAdmin,
   insertAdmin,
   viewadmin,
   singleviewadmin,

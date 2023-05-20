@@ -4,15 +4,18 @@ const Venue=require('../admin/Venue')
 const VenueBookSchema = new Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId, // change type to ObjectId
-        ref: 'User', // reference to User model
+        ref: 'User', 
     },
     VenueId: {
-        type: mongoose.Schema.Types.ObjectId, // change type to ObjectId
-        ref: 'Venue', // reference to Decoration model
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'venueSchema', 
     },
     Date: {
         type: String,
     },
+},
+{
+  timestamps: true, 
 });
 const VenueBook=mongoose.model("VenueBook",VenueBookSchema)
 module.exports=VenueBook;

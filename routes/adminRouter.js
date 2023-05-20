@@ -2,12 +2,12 @@ const express=require('express');
  const router=express.Router();
  const upload=require('../utility/multer');
  const admin=require('../controllers/adminController')
-const adminAuth=require('../middleware/adminAuth')
+// const adminAuth=require('../middleware/adminAuth')
 
 
 
 router.post('/login',admin.login)
-
+// router.use(adminAuth)
 router.get('/Venuedisplay',admin.Venuecategory)
 router.post('/Venueadd',upload.single('image'),admin.addVenue)
 
@@ -26,8 +26,15 @@ router.get('/photographerView',admin.viewphotographer)
  router.put("/decoredit/:id",upload.single('image',4),admin.updateDecor)
  router.put("/photoedit/:id",upload.single('image',5),admin.updatePhoto)
  router.put("/venuEdit/:id",upload.single('image',4),admin.updateVenue)
+ router.put("/deletecat/:id",admin.Deletecat)
+ router.get('/getall', admin.getAdmin)
+ router.put("/deletevenue/:id",admin.Deletevenue)
+ 
+ router.put("/deletedecor/:id",admin.Deletedecor)
+  
+ router.put("/deletephoto/:id",admin.Deletephoto)
 
-
+ router.put('/blockuser/:id', admin.blockUser)
 
 
 

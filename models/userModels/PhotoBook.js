@@ -7,12 +7,15 @@ const PhotoBookSchema = new Schema({
         ref: 'User', // reference to User model
     },
     PhotoId: {
-        type: mongoose.Schema.Types.ObjectId, // change type to ObjectId
-        ref: 'Photo', // reference to Decoration model
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'photographerSchema', 
     },
     Date: {
         type: String,
+      },
     },
-});
+    {
+      timestamps: true, 
+    });
 const PhotoBook=mongoose.model("PhotoBook",PhotoBookSchema)
 module.exports=PhotoBook;

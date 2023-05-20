@@ -19,10 +19,7 @@ const userSchema=new Schema({
         type:String,
         required:true
     },
-    // cpassword:{
-    //     type:String,
-    //     required:true
-    // },
+  
     isBlocked:{
         type:Boolean,
         default:false
