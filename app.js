@@ -40,6 +40,6 @@ app.use("/api", userRoutes);
 // app.use("/superadmin", superadminRoutes);
 // app.use("/admin", adminRoutes);
 // app.use("/", userRoutes);
-// app.listen(PORT, () => {
-//   console.log(`server running on http://localhost:${PORT} `);
-// });
+app.listen(PORT, () => {
+  console.log(`server running on http://localhost:${PORT} `);
+});
