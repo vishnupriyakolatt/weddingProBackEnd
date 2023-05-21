@@ -410,8 +410,21 @@ const getAdmin=async(req,res)=>{
  }
 
 
+ const singleviewadmin=async(req,res)=>{
+  try {
+    console.log(req.params);
+    const { id } = req.params;
+    const userindividual = await Admin.findById({ _id: id });
+    console.log(userindividual);
+    res.status(201).json(userindividual);
+  } catch (error) {
+    console.log("error");
+  }
+};
+ 
+
 module.exports = {
-  login,Deletecat,Deletevenue,Deletedecor,Deletephoto,blockUser,getAdmin,
+  login,Deletecat,Deletevenue,Deletedecor,Deletephoto,blockUser,getAdmin,singleviewadmin,
   addVenue,
   Venuecategory,
   customerview,
