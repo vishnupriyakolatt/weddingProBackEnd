@@ -28,6 +28,7 @@ router.get('/Orderdisplay',User.Order)
 
 
  router.use(userAuth)
+ 
 router.get('/singleVenue/:id',User.singleVenue)
 router.get('/venuedisplay',User.venuedisplay)
 

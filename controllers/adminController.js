@@ -361,6 +361,8 @@ const blockUser = async (req, res) => {
 };
 
 const getAdmin=async(req,res)=>{
+  const arr=[12,4,6,7,8]
+  const sorted=arr.sort()
   countuser=await User.find({}).count()
   console.log(countuser)
  
@@ -406,7 +408,7 @@ const getAdmin=async(req,res)=>{
  
    const TotalRevenue=VenueBookings+DecorBookings+photoBookings
  
- res.status(200).json({TotalRevenue,venuecount,countuser,photocount,Decorcount,venue,decor,admin,user,DecorBookings,photoBookings,VenueBookings,})
+ res.status(200).json({TotalRevenue,venuecount,countuser,photocount,Decorcount,venue,decor,admin,user,DecorBookings,photoBookings,VenueBookings,sorted})
  }
 
 

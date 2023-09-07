@@ -2,12 +2,12 @@ const express=require("express");
 const router=express.Router()
 const upload=require('../utility/multer')
 const superadminController=require("../controllers/superadminController")
-  const superAuth=require('../middleware/superAuth')
+  // const superAuth=require('../middleware/superAuth')
 
 router.post("/superlogin",superadminController.login)
 
 
-  router.use(superAuth)
+  // router.use(superAuth)
  router.get('/viewadmin', superadminController.viewadmin)
  router.post("/addadmin",upload.single('image'),superadminController.insertAdmin)
  router.get("/viewadminsingle/:id",superadminController.singleviewadmin)

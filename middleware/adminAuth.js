@@ -15,7 +15,8 @@ const adminAuth=async(req,res,next)=>{
    try {
        const {_id} = jwt.verify(token,"adminSecretkey")
        const admin=await Admin.find({_id})
-       if(req.admin=admin){
+       if(req.admin==admin){
+        
            next()
        }else{
            res.status(201).json({message:true})

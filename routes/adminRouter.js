@@ -7,7 +7,7 @@ const express=require('express');
 
 
 router.post('/login',admin.login)
-// router.use(adminAuth)
+//  router.use(adminAuth)
 router.get('/Venuedisplay',admin.Venuecategory)
 router.post('/Venueadd',upload.single('image'),admin.addVenue)
 

@@ -45,35 +45,41 @@ const otpverify = async (req, res) => {
     const phonenumber = data.mobile;
     const Hashpassword = await bcrypt.hash(data.password, 10);
     const userExist = await User.findOne({ mobile: data.mobile });
+
     if (userExist) {
-      res
-        .status(201)
-        .json({
-          message: "Already registered using this mobile number",
-          state: false,
-        });
+      res.status(201).json({
+        message: "Already registered using this mobile number",
+        state: false,
+      });
     } else {
-      const twiliostatus = await twilio.checkVerificationToken(
-        otp,
-        phonenumber
-      );
-      if (twiliostatus) {
-        const newUser = new User({
-          name: data.name,
-          email: data.email,
-          mobile: data.mobile,
-          password: Hashpassword,
-        });
-        await newUser.save();
-        res.status(201).json();
-      } else {
-        res.status(200).json({ message: "OTP is invalid" });
-      }
+      twilio.checkVerificationToken(otp, phonenumber).then((twiliostatus)=>{
+        console.log(twiliostatus)
+        if (twiliostatus) {
+
+          const newUser = new User({
+            name: data.name,
+            email: data.email,
+            mobile: data.mobile,
+            password: Hashpassword,
+          });
+           newUser.save().then(reult=>{
+
+            res.status(201).json({ message: "User registered successfully" });
+          }).catch((err)=>console.log(err))
+        }
+      }).catch((err)=>{
+          res.status(400).json({ message: "OTP is invalid" });
+          console.log("otp invalid")
+        
+      })
+      
     }
   } catch (error) {
     console.log(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 const login = async (req, res) => {
   try {
@@ -108,7 +114,10 @@ const login = async (req, res) => {
       } else {
         res.status(401).json({ error: "Incorrect login details" });
       }
-    }
+    }else{
+
+      res.status(401).json({ error: "Incorrect login details" });
+    };
   } catch (error) {
     console.log(error);
   }

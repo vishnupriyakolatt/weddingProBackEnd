@@ -28,8 +28,8 @@ exports.sendVerificationToken = (phoneNumber) => {
 };
 
 exports.checkVerificationToken = (otp, phoneNumber) => {
-  console.log(otp , phoneNumber)
-  return new Promise((resolve) => {
+  console.log(`${otp , phoneNumber }checkVerificationToken`)
+  return new Promise((resolve,reject) => {
 
 client.verify.v2.services(TWILIO_SERVICE_ID)
 .verificationChecks
@@ -38,17 +38,17 @@ client.verify.v2.services(TWILIO_SERVICE_ID)
   .then((verification_check) =>{
   console.log(verification_check.status)
  
-   if (verification_check.status) {
+   if (verification_check.valid) {
           resolve(true);
         } else {
-          resolve(false);  
+          reject(false);  
         }
 }
 )
     
       .catch((error) => {
         console.log(error+"this is the error"); 
-        resolve(false);
+        reject(error);
       });
   });
 };
